@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 export function createUser(req, res) {
 
@@ -21,7 +22,10 @@ export function createUser(req, res) {
             res.json({
                 message : "User Created Successfully"
             })
-        })
+        }
+    ).catch(err => {
+        res.status(500).json({ message: "Error creating user", error: err.message });
+    });
 }
 
 export function loginUser(req,res){
@@ -31,16 +35,39 @@ export function loginUser(req,res){
     User.find({email: email}).then( 
         (users)=>{
             if(users[0] == null){ // user kenek nattm
-                message : "User not Found"
+                return res.json({
+                    message : "User not Found"
+                });
             }
             else{
                 const user = users[0] //users la innwnma eka gannnwa
 
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password)//user kenage password ekai data base eke thyna password ekai samanaid kiyla balnwa
-                res.json({
-                    matching : isPasswordCorrect //password eka samana nam true nathnm false
-                })
+                if(isPasswordCorrect){
+                    const payload = {
+                        firstName:user.firstName,
+                        lastName:user.lastName,
+                        email:user.email,
+                        role:user.role,
+                        isEmailVerified:user.isEmailVerified
+                    };
+                
+                    const token = jwt.sign(payload, "secretkey96$2025") //payload eka token ekata convert krnwa
+
+                    res.json({
+                        // matching : isPasswordCorrect, //password eka samana nam true nathnm false
+                        message: "Login Successfully",
+                        token : token //token eka front end ekta dnnwa
+                    });
+                } 
+                else{
+                    res.json({
+                        message: "Password is incorrect"
+                    });
+                }
             }
-    }
-    )//body eken ena email ekta adala email eka tiyna user kenek innwd kiyla blnw
+        }
+    ).catch(err => {
+        res.status(500).json({ message: "Error logging in", error: err.message });
+    });
 }
