@@ -52,7 +52,9 @@ export function loginUser(req,res){
                         isEmailVerified:user.isEmailVerified
                     };
                 
-                    const token = jwt.sign(payload, "secretkey96$2025") //payload eka token ekata convert krnwa
+                    const token = jwt.sign(payload, "secretkey96$2025",{
+                         expiresIn :"150h"
+                    }) //payload eka token ekata convert krnwa
 
                     res.json({
                         // matching : isPasswordCorrect, //password eka samana nam true nathnm false
@@ -61,7 +63,7 @@ export function loginUser(req,res){
                     });
                 } 
                 else{
-                    res.json({
+                    res.status(401).json({
                         message: "Password is incorrect"
                     });
                 }
