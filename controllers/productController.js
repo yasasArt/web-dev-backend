@@ -59,5 +59,38 @@ export function getAllProducts(req, res){
 }
 
 export function deleteProduct(req, res){
-    
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "only admin can delete products"
+        })
+        return
+    }
+    const productID = req.params.productID
+
+    Product.deleteOne({productID : productID}).then( //productID eka me ewala tiyna productID ekta samana kenwa delete krnn.
+        ()=>{
+            res.json({
+                message : "Product deleted successfully"
+            })
+        }
+        )
 }
+
+export function updateProduct(req, res){
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "only admin can update products"
+        })
+        return
+
+    }
+    const productID = req.params.productID
+
+    Product.updateOne({productID : productID}, req.body).then( 
+        ()=>{
+            res.json({
+                message : "Product updated successfully"
+            })
+        }
+        )
+    }
