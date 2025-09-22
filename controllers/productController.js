@@ -92,5 +92,39 @@ export function updateProduct(req, res){
                 message : "Product updated successfully"
             })
         }
-        )
-    }
+    )
+}
+
+export function getProductById(req, res){
+    const productID = req.params.productID
+
+    Product.findOne({productID : productID}).then(
+        (product)=>{
+            if(product == null){
+                return res.status(404).json({
+                    message : "Product not found"
+                });
+            }
+            else{
+                if(product.isAvailable){
+                    res.json(product)
+                }else{
+                    if(isAdmin(req)){
+                        res.json(product)
+                    }else{
+                        res.status(403).json({
+                            message : "Product is not available"
+                        })
+                    }
+                }
+            }
+        }
+    ).catch(
+        (error)=>{
+            res.status(500).json({
+                message : "Server error",
+                error : error.message
+            })
+        }
+    )
+}

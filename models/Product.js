@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema(
             required : true
         },
         images : {
-            type : [String], 
+            type : [String], //images godak dagnna puluwn
             required : true
         },
         category : {
