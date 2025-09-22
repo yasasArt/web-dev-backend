@@ -73,3 +73,17 @@ export function loginUser(req,res){
         res.status(500).json({ message: "Error logging in", error: err.message });
     });
 }
+
+export function isAdmin(req){
+    if(req.user == null){
+       
+        return false
+     }
+    if(req.user.role != "Admin"){
+        
+        return false
+    }
+
+    return true
+
+}

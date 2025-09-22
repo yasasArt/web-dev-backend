@@ -1,8 +1,8 @@
 import express, { request } from "express"
 import mongoose from "mongoose"
-import studentRouter from "./routes/studentRouter.js"
 import userRouter from "./routes/userRouter.js"
 import jwt from "jsonwebtoken"
+import productRouter from "./routes/productRouter.js"
 
 const mongoURI = "mongodb+srv://admin:1234@cluster0.k4ctve7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"//mongodb.net/yasas? ==> api kamthi database eka hadagnn puluwn
 mongoose.connect(mongoURI).then(
@@ -47,8 +47,8 @@ app.use(
     }
 )
 
-app.use('/students', studentRouter)
 app.use('/users', userRouter)
+app.use('/products', productRouter)
 
 app.listen(3000,
     ()=>{
