@@ -29,19 +29,22 @@ export function createProduct(req, res){
     )
 }
 
-export function getAllProducts(req, res){
-    if (isAdmin(req)) {
-        Product.find()
-        .then((products) => {
-            res.json(products);
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: "Server error",
-                error: error.message
-            });
-        });
+export async function getAllProducts(req, res){ //async function ekak dnne anith ayta badawak natuwa krnnd.
+    try {
+        if (isAdmin(req)) {
+        // Product.find()
+        // .then((products) => {
+        //     res.json(products);
+        // })
+        // .catch((error) => {
+        //     res.status(500).json({
+        //         message: "Server error",
+        //         error: error.message
+        //     });
+        // });
         
+        const products = await Product.find(); // await eka danwnm function eka async krnna one
+
     } else {
         Product.find({ isAvailable: true }) 
         .then((products) => {
@@ -49,12 +52,19 @@ export function getAllProducts(req, res){
         })
         .catch((error) => {
             res.status(500).json({
-                message: "Server error",
+                message: "Error fetching products",
                 error: error.message
             });        
         });
 
     }
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error",
+            error: error.message
+        });
+    }
+    
     
 }
 
