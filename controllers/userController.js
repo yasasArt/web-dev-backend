@@ -6,7 +6,7 @@ export function createUser(req, res) {
 
     const data = req.body
 
-    const hashedPassword = bcrypt.hashSync(data.password, 10)//10 kiyla danna hashing rounds eka
+    const hashedPassword = bcrypt.hashSync(data.password, 10)//10 kiyla danne hashing rounds eka
 
     const user = new User({
         email : data.email,
@@ -40,7 +40,7 @@ export function loginUser(req,res){
                 });
             }
             else{
-                const user = users[0] //users la innwnma eka gannnwa
+                const user = users[0] //users la innwnm eka gannnwa
 
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password)//user kenage password ekai data base eke thyna password ekai samanaid kiyla balnwa
                 if(isPasswordCorrect){
@@ -52,18 +52,18 @@ export function loginUser(req,res){
                         isEmailVerified:user.isEmailVerified
                     };
                 
-                    const token = jwt.sign(payload, "secretkey96$2025",{
+                    const token = jwt.sign(payload, "secretkey96$2025",{ // me key+payload eken encript krpu token ekk hambenw.
                          expiresIn :"150h"
-                    }) //payload eka token ekata convert krnwa
+                    }) 
 
                     res.json({
                         // matching : isPasswordCorrect, //password eka samana nam true nathnm false
                         message: "Login Successfully",
-                        token : token //token eka front end ekta dnnwa
+                        token : token //token eka frontend ekta dnnwa
                     });
                 } 
                 else{
-                    res.status(401).json({
+                    res.status(401).json({ 
                         message: "Password is incorrect"
                     });
                 }
