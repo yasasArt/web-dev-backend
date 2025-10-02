@@ -86,16 +86,3 @@ export function isAdmin(req){
     return true
 
 }
-
-export function isAdmin2(req){
-    if(req.user == null){
-       
-        return false
-     }
-    if(req.user.role != "Admin"){
-        
-        return false
-    }
-    return true
-
-}
