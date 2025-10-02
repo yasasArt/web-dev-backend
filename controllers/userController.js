@@ -83,9 +83,6 @@ export function isAdmin(req){
         
         return false
     }
-
-    
-    
     return true
 
 }
