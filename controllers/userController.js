@@ -74,18 +74,15 @@ export function loginUser(req,res){
     });
 }
 
-export function isAdmin(req){
-    if(req.user == null){
+// export function isAdmin(req){
+//     if(req.user == null){
        
-        return false
-     }
-    if(req.user.role != "Admin"){
+//         return false
+//      }
+//     if(req.user.role != "Admin"){
         
-        return false
-    }
+//         return false
+//     }
+//     return true
 
-    
-    
-    return true
-
-}
+// }
