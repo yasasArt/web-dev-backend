@@ -52,14 +52,15 @@ export function loginUser(req,res){
                         isEmailVerified:user.isEmailVerified
                     };
                 
-                    const token = jwt.sign(payload, "secretkey96$2025",{ // me key+payload eken encript krpu token ekk hambenw.
+                    const token = jwt.sign(payload, process.env.JWT_SECRET,{ // me key+payload eken encript krpu token ekk hambenw.
                          expiresIn :"150h"
                     }) 
 
                     res.json({
                         // matching : isPasswordCorrect, //password eka samana nam true nathnm false
                         message: "Login Successfully",
-                        token : token //token eka frontend ekta dnnwa
+                        token : token, //token eka frontend ekta dnnwa
+                        role: user.role,
                     });
                 } 
                 else{
