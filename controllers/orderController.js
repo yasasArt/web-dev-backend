@@ -1,5 +1,7 @@
+import { json } from "express";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";   // FIX: product model import
+import {isAdmin} from "./userController.js";
 
 export async function createOrder(req, res) {
     //ORD00001
@@ -85,3 +87,21 @@ export async function createOrder(req, res) {
         })
     }
 }
+export async function getorders(req, res) {
+    if (req.user == null) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    // Admin can see all orders
+    if (isAdmin(req)) {
+        const orders = await Order.find().sort({ date: -1 });
+        return res.json(orders);
+    }
+
+    // Normal user: only their orders
+    const orders = await Order.find({ email: req.user.email }).sort({ date: -1 });
+    return res.json(orders);
+}
+
