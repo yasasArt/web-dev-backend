@@ -3,7 +3,20 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import axios from "axios";
+import nodemailer from "nodemailer";
+import Otp from "../models/Otp.js";
 dotenv.config()
+
+const transporter = nodemailer.createTransport({
+    service : "gmail",
+    host : "smtp.gmail.com",
+    port : 587,
+    secure : false,
+    auth : {
+        user : "chandijayaweera444@gmail.com",
+        pass: process.env.GMAIL_APP_PASSWORD,
+    }
+})
 
 export function createUser(req, res) {
 
@@ -174,4 +187,56 @@ export async function googleLogin(req, res) {
       error: error.message,
     });
   }
+}
+
+export async function sendOTP(req,res) {
+
+    try{
+    const email = req.params.email 
+    const user = await User.findOne({
+        email: email
+    })
+    if(user == null){
+        res.status(404).json({
+            message: "User not found"
+        })
+        return
+    }
+    await Otp.deleteMany({
+        email: email
+    })
+
+    // generate random 6 digit otp
+    const otpCode = Math.floor(100000 + Math.random() * 900000). toString()
+
+    const otp = new Otp({
+        email: email,
+        otp: otpCode
+    })
+    await otp.save();
+
+    const message = {
+        from : "chandijayaweera444@gmail.com",
+        to : email,
+        subject : "You OTP Code",
+        text : "You OTP code is " + otpCode 
+    }
+    transporter.sendMail(message , (err,info)=>{
+        if(err){
+            res.status(500).json({
+                message:"Failed to send OTP",
+                error: err.message
+            })
+        }else{
+            res.json({
+                message: "OTP sent successfully"
+            })
+        }
+    })
+}catch(error){
+    res.status(500).json({
+        message: "Failed to send OTP",
+        error: error.message
+    })
+}
 }
