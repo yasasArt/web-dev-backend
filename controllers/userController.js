@@ -189,6 +189,41 @@ export async function googleLogin(req, res) {
   }
 }
 
+export async function validateOTPAndUpdatePassword(req, res) {
+    try {
+        const otp = req.body.otp;
+        const newPassword = req.body.newPassword;
+        const email = req.body.email;
+
+        const otpRecord = await Otp.findOne({ email: email, otp: otp });
+        if (otpRecord == null) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        }
+
+        await Otp.deleteMany({ email: email });
+
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+        await User.updateOne(
+            { email: email },
+            { $set: { password: hashedPassword, isEmailVerified: true } } //$set - document eke password ekai isEmailVerified ekai witrai update wenne.
+        );
+
+        res.json({
+            message: "Password updated successfully",
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to update password",
+            error: error.message,
+        });
+    }
+}
+
+
 export async function sendOTP(req,res) {
 
     try{
