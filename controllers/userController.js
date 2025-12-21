@@ -95,7 +95,7 @@ export function isAdmin(req){
        
         return false
      }
-    if(req.user.role != "Admin"){
+    if(req.user.role != "admin"){
         
         return false
     }
@@ -274,4 +274,23 @@ export async function sendOTP(req,res) {
         error: error.message
     })
 }
+}
+
+export async function getAllUsers(req, res) {
+    // Check if user is admin
+    if (!isAdmin(req)) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching users",
+            error: error.message
+        });
+    }
 }

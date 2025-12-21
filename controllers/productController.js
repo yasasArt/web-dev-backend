@@ -32,41 +32,40 @@ export function createProduct(req, res){
 export async function getAllProducts(req, res){ //async function ekak dnne anith ayta badawak natuwa krnnd.
     try {
         if (isAdmin(req)) {
-        // Product.find()
-        // .then((products) => {
-        //     res.json(products);
-        // })
-        // .catch((error) => {
-        //     res.status(500).json({
-        //         message: "Server error",
-        //         error: error.message
-        //     });
-        // });
-        
-        const products = await Product.find(); // await eka danwnm function eka async krnna one
+            // Product.find()
+            // .then((products) => {
+            //     res.json(products);
+            // })
+            // .catch((error) => {
+            //     res.status(500).json({
+            //         message: "Server error",
+            //         error: error.message
+            //     });
+            // });
+            
+            const products = await Product.find(); // await eka danwnm function eka async krnna one
+            res.json(products); // ✅ SEND RESPONSE FOR ADMIN
 
-    } else {
-        Product.find({ isAvailable: true }) 
-        .then((products) => {
-            res.json(products);
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: "Error fetching products",
-                error: error.message
-            });        
-        });
-
-    }
+        } else {
+            Product.find({ isAvailable: true }) 
+            .then((products) => {
+                res.json(products);
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    message: "Error fetching products",
+                    error: error.message
+                });        
+            });
+        }
     } catch (error) {
         res.status(500).json({
             message: "Server error",
             error: error.message
         });
     }
-    
-    
-}
+} 
+
 
 export function deleteProduct(req, res){
     if(!isAdmin(req)){
@@ -137,4 +136,26 @@ export function getProductById(req, res){
             })
         }
     )
+}
+
+export async function searchProducts(req, res) {
+    const query = req.params.query;
+
+    try {
+        const products = await Product.find({
+            $or : [
+                {name: { $regex: query, $options: "i" },},//name eka ($regex : query)me query eken kotasaka tibunath || $options : "i" - case sensitive blnne ne. (A,a)
+                {altNames: {$elemMatch : {$regex : query, $options : "i"}}}
+            ],
+             isAvailable: true
+        });
+
+        res.status(200).json(products);
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error searching products",
+            error: error.message
+        });
+    }
 }
