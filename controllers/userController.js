@@ -278,11 +278,9 @@ export async function sendOTP(req,res) {
 
 export async function getAllUsers(req, res) {
     // Check if user is admin
-    if (!isAdmin(req)) {
-        return res.status(401).json({
-            message: "Unauthorized"
-        });
-    }
+   if (!isAdmin(req)) {
+  return res.status(401).json({ message: "Unauthorized" });
+}
 
     try {
         const users = await User.find();
