@@ -29,6 +29,7 @@ export function createUser(req, res) {
         firstName : data.firstName,
         lastName : data.lastName,
         password : hashedPassword,
+        role : data.role,
     }) // aluthin ena userwa user kenek widiyta hadgnnwa
 
 
@@ -57,7 +58,16 @@ export function loginUser(req,res){
             else{
                 const user = users[0] //users la innwnm eka gannnwa
 
+
+                if (user.isBlocked){
+                    res.status(403).json({
+                        message: "User is blocked. Contact admin.",
+                    });
+                    return;
+                }
+
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password)//user kenage password ekai data base eke thyna password ekai samanaid kiyla balnwa
+                
                 if(isPasswordCorrect){
                     const payload = {
                         firstName:user.firstName,
@@ -180,6 +190,14 @@ export async function googleLogin(req, res) {
       role: existingUser.role,
     });
 
+    if (user.isBlocked) {
+        res.status(403).json({
+            message: "User is blocked. Contact admin.",
+
+        });
+        return
+    }
+
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -222,7 +240,6 @@ export async function validateOTPAndUpdatePassword(req, res) {
         });
     }
 }
-
 
 export async function sendOTP(req,res) {
 
@@ -278,11 +295,9 @@ export async function sendOTP(req,res) {
 
 export async function getAllUsers(req, res) {
     // Check if user is admin
-    if (!isAdmin(req)) {
-        return res.status(401).json({
-            message: "Unauthorized"
-        });
-    }
+//    if (!isAdmin(req)) {
+//   return res.status(401).json({ message: "Unauthorized" });
+// }
 
     try {
         const users = await User.find();
@@ -291,6 +306,41 @@ export async function getAllUsers(req, res) {
         res.status(500).json({
             message: "Error fetching users",
             error: error.message
+        });
+    }
+}
+
+
+export async function updateUserStatus(req, res) {
+    // if (!isAdmin(req)) {
+    //     return res.status(401).json({
+    //         message: "Unauthorized",
+    //     });
+    // }
+
+    const email = req.params.email;
+
+    if (req.user.email === email) {
+        return res.status(400).json({
+            message: "Admin cannot change their own status",
+        });
+    }
+
+    const { isBlocked } = req.body;
+
+    try {
+        await User.updateOne(
+            { email },
+            { isBlocked }
+        );
+
+        res.json({
+            message: "User status updated successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user status",
+            error: error.message,
         });
     }
 }
