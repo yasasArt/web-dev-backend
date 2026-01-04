@@ -105,7 +105,7 @@ export function isAdmin(req){
        
         return false
      }
-    if(req.user.role != "admin"){
+    if(req.user.role != "Admin"){
         
         return false
     }
@@ -295,9 +295,9 @@ export async function sendOTP(req,res) {
 
 export async function getAllUsers(req, res) {
     // Check if user is admin
-//    if (!isAdmin(req)) {
-//   return res.status(401).json({ message: "Unauthorized" });
-// }
+   if (!isAdmin(req)) {
+  return res.status(401).json({ message: "Unauthorized" });
+}
 
     try {
         const users = await User.find();
@@ -312,11 +312,11 @@ export async function getAllUsers(req, res) {
 
 
 export async function updateUserStatus(req, res) {
-    // if (!isAdmin(req)) {
-    //     return res.status(401).json({
-    //         message: "Unauthorized",
-    //     });
-    // }
+    if (!isAdmin(req)) {
+        return res.status(401).json({
+            message: "Unauthorized",
+        });
+    }
 
     const email = req.params.email;
 

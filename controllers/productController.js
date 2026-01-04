@@ -3,12 +3,12 @@ import { isAdmin } from "./userController.js";
 
 export function createProduct(req, res){
     
-    // if(!isAdmin(req)){
-    //     res.status(403).json({
-    //         message : "Forbidden"
-    //     })
-    //     return
-    // }
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "Forbidden"
+        })
+        return
+    }
 
 
     const product = new Product(req.body) 
@@ -68,12 +68,12 @@ export async function getAllProducts(req, res){ //async function ekak dnne anith
 
 
 export function deleteProduct(req, res){
-    // if(!isAdmin(req)){
-    //     res.status(403).json({
-    //         message : "only admin can delete products"
-    //     })
-    //     return
-    // }
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "only admin can delete products"
+        })
+        return
+    }
     const productID = req.params.productID
 
     Product.deleteOne({productID : productID}).then( //productID eka me ewala tiyna productID ekta samana kenwa delete krnn.
@@ -86,13 +86,13 @@ export function deleteProduct(req, res){
 }
 
 export function updateProduct(req, res){
-    // if(!isAdmin(req)){
-    //     res.status(403).json({
-    //         message : "only admin can update products"
-    //     })
-    //     return
+    if(!isAdmin(req)){
+        res.status(403).json({
+            message : "only admin can update products"
+        })
+        return
 
-    // }
+    }
     const productID = req.params.productID
 
     Product.updateOne({productID : productID}, req.body).then( 
