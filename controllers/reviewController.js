@@ -8,6 +8,13 @@ export const createReview = async (req, res) => {
   try {
     const { name, productID, rating, comment } = req.body;
 
+    // Validate required fields
+    if (!name || !productID || !rating) {
+      return res.status(400).json({
+        message: "Missing required fields: name, productID, rating",
+      });
+    }
+
     // check existing review for same product
     const existingReview = await Review.findOne({ productID });
 

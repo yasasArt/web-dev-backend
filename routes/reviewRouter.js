@@ -9,19 +9,19 @@ import {
 
 const router = express.Router();
 
-// create review
+// CREATE review
 router.post("/", createReview);
 
-// get all reviews (admin)
+// GET all reviews (admin)
 router.get("/", getAllReviews);
 
-// get reviews by product ID (user)
+// GET reviews by product
 router.get("/product/:productID", getReviewsByProduct);
 
-// update review status (admin)
+// UPDATE review status
 router.put("/:id/status", updateReviewStatus);
 
-// delete review (admin)
+// DELETE review
 router.delete("/:id", deleteReview);
 
 export default router;
